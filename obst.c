@@ -69,7 +69,11 @@ int main(){
         scanf("%d",&j);
         freq[i] = j;
     }
-  
+    /*for (i = 0 ;i < n+1; ++i) {
+        scanf("%d",&j);
+        q[i] = j; //valor q0 representa a probabilidade e se consultar uma chave menor que k 1;
+    }*/
+
     printf("Cost of Optimal BST is %d ", optimalSearchTree(keys, freq, n));
     free(q);
     free(freq);
