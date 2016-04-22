@@ -1,5 +1,8 @@
-#include<stdio.h>
-#include<stdlib.h>
+// Dynamic Programming code for Optimal Binary Search Tree Problem
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
 // A utility function to get sum of array elements freq[i] to freq[j]
 int sum(int freq[], int i, int j);
 
@@ -7,7 +10,6 @@ int sum(int freq[], int i, int j);
    a Binary Search Tree. */
 int optimalSearchTree(int keys[], int freq[], int n)
 {
-    int INT_MAX;
     /* Create an auxiliary 2D matrix to store results of subproblems */
     int cost[n][n];
 
@@ -34,7 +36,9 @@ int optimalSearchTree(int keys[], int freq[], int n)
             for (int r=i; r<=j; r++)
             {
                // c = cost when keys[r] becomes root of this subtree
-               int c = ((r > i)? cost[i][r-1]:0) + ((r < j)? cost[r+1][j]:0) + sum(freq, i, j);
+               int c = ((r > i)? cost[i][r-1]:0) +
+                       ((r < j)? cost[r+1][j]:0) +
+                       sum(freq, i, j);
                if (c < cost[i][j])
                   cost[i][j] = c;
             }
@@ -53,14 +57,17 @@ int sum(int freq[], int i, int j)
 }
 
 // Driver program to test above functions
-int main(){
+int main()
+{
     int i,n,j,*keys,*freq,*q;
 
     scanf("%d",&n );
     keys = (int *)malloc(n * sizeof(int));
     freq = (int *)malloc(n * sizeof(int));
     q = (int *)malloc((n+1) * sizeof(int));
-
+    //int keys[] = {10, 12, 20};
+    //int freq[] = {34, 8, 50};
+    //int n = sizeof(keys)/sizeof(keys[0]);
     for (i = 0; i < n; ++i) {
         scanf("%d",&j);
         keys[i] = j;
@@ -73,9 +80,9 @@ int main(){
         scanf("%d",&j);
         q[i] = j; //valor q0 representa a probabilidade e se consultar uma chave menor que k 1;
     }*/
+    printf("Cost of Optimal BST is %d\n", optimalSearchTree(keys, freq, n));
 
-    printf("Cost of Optimal BST is %d ", optimalSearchTree(keys, freq, n));
-    free(q);
+    //free(q);
     free(freq);
     free(keys);
     return 0;
