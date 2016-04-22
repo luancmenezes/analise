@@ -12,7 +12,7 @@ int optimalSearchTree(int keys[], int freq[], int n)
 {
     /* Create an auxiliary 2D matrix to store results of subproblems */
     int cost[n][n];
-
+    int tree[n][n]; //Criando a Arvore
     /* cost[i][j] = Optimal cost of binary search tree that can be
        formed from keys[i] to keys[j].
        cost[0][n-1] will store the resultant cost */
@@ -20,27 +20,30 @@ int optimalSearchTree(int keys[], int freq[], int n)
     // For a single key, cost is equal to frequency of the key
     for (int i = 0; i < n; i++)
         cost[i][i] = freq[i];
+    for (int a = 0; a < n; a++)
+        tree[a][a] = a; //Setando o indereco das respectivos nos
 
     // Now we need to consider chains of length 2, 3, ... .
     // L is chain length.
     for (int L=2; L<=n; L++)
     {
         // i is row number in cost[][]
-        for (int i=0; i<=n-L+1; i++)
+        for (int i=0; i<=n-L; i++)
         {
             // Get column number j from row number i and chain length L
             int j = i+L-1;
+
             cost[i][j] = INT_MAX;
 
             // Try making all keys in interval keys[i..j] as root
             for (int r=i; r<=j; r++)
             {
                // c = cost when keys[r] becomes root of this subtree
-               int c = ((r > i)? cost[i][r-1]:0) +
-                       ((r < j)? cost[r+1][j]:0) +
-                       sum(freq, i, j);
-               if (c < cost[i][j])
+               int c = ((r > i)? cost[i][r-1]:0) + ((r < j)? cost[r+1][j]:0) + sum(freq, i, j);
+               if (c < cost[i][j]){
                   cost[i][j] = c;
+                  tree [i][j] = r;
+                }
             }
         }
     }
