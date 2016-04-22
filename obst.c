@@ -27,6 +27,7 @@ int optimalSearchTree(int keys[], int freq[], int n)
     // L is chain length.
     for (int L=2; L<=n; L++)
     {
+      
         // i is row number in cost[][]
         for (int i=0; i<=n-L; i++)
         {
