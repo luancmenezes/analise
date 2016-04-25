@@ -1,58 +1,21 @@
-// Dynamic Programming code for Optimal Binary Search Tree Problem
-//22/04
 #include <stdio.h>
-#include <limits.h>
 #include <stdlib.h>
+#include <limits.h>
+#define MAX 200
 
-// A utility function to get sum of array elements freq[i] to freq[j]
-int sum(int freq[], int i, int j);
+typedef struct obst{
+  int key;
+  struct obst *esq, *dir;
+}obst;
 
-/* A Dynamic Programming based function that calculates minimum cost of
-   a Binary Search Tree. */
-int optimalSearchTree(int keys[], int freq[], int n)
-{
-    /* Create an auxiliary 2D matrix to store results of subproblems */
-    int cost[n][n];
-    int tree[n][n]; //Criando a Arvore
-    /* cost[i][j] = Optimal cost of binary search tree that can be
-       formed from keys[i] to keys[j].
-       cost[0][n-1] will store the resultant cost */
+int cost[MAX][MAX];
+int w[MAX][MAX];
+int raiz[MAX][MAX];
+int q[MAX];
+int freq[MAX];
+int keys[MAX];
+int d=0;
 
-    // For a single key, cost is equal to frequency of the key
-    for (int i = 0; i < n; i++)
-        cost[i][i] = freq[i];
-    for (int a = 0; a < n; a++)
-        tree[a][a] = a; //Setando o indereco das respectivos nos
-
-    // Now we need to consider chains of length 2, 3, ... .
-    // L is chain length.
-    for (int L=2; L<=n; L++)
-    {
-      
-        // i is row number in cost[][]
-        for (int i=0; i<=n-L; i++)
-        {
-            // Get column number j from row number i and chain length L
-            int j = i+L-1;
-
-            cost[i][j] = INT_MAX;
-
-            // Try making all keys in interval keys[i..j] as root
-            for (int r=i; r<=j; r++)
-            {
-               // c = cost when keys[r] becomes root of this subtree
-               int c = ((r > i)? cost[i][r-1]:0) + ((r < j)? cost[r+1][j]:0) + sum(freq, i, j);
-               if (c < cost[i][j]){
-                  cost[i][j] = c;
-                  tree [i][j] = r;
-                }
-            }
-        }
-    }
-    return cost[0][n-1];
-}
-
-// A utility function to get sum of array elements freq[i] to freq[j]
 int sum(int freq[], int i, int j)
 {
     int s = 0;
@@ -61,34 +24,123 @@ int sum(int freq[], int i, int j)
     return s;
 }
 
-// Driver program to test above functions
-int main()
+void optimalSearchTree(int n)
 {
-    int i,n,j,*keys,*freq,*q;
+  int j,x;
+    for(int i = 0; i <= n; i++)  {
+           w[i][i] = q[i];
+           for(int j = i + 1; j <= n; j++)
+              w[i][j] = w[i][j-1] + freq[j] + q[j];
+     }
 
-    scanf("%d",&n );
-    keys = (int *)malloc(n * sizeof(int));
-    freq = (int *)malloc(n * sizeof(int));
-    q = (int *)malloc((n+1) * sizeof(int));
-    //int keys[] = {10, 12, 20};
-    //int freq[] = {34, 8, 50};
-    //int n = sizeof(keys)/sizeof(keys[0]);
-    for (i = 0; i < n; ++i) {
-        scanf("%d",&j);
-        keys[i] = j;
-    }
-    for (i = 0 ;i < n; ++i) {
-        scanf("%d",&j);
-        freq[i] = j;
-    }
-    /*for (i = 0 ;i < n+1; ++i) {
-        scanf("%d",&j);
-        q[i] = j; //valor q0 representa a probabilidade e se consultar uma chave menor que k 1;
-    }*/
-    printf("Cost of Optimal BST is %d\n", optimalSearchTree(keys, freq, n));
 
-    //free(q);
-    free(freq);
-    free(keys);
-    return 0;
+    for (int i = 0; i <= n; i++)
+        cost[i][i] = w[i][i];
+    for(int i=0; i < n; i++ ){
+        j = i + 1;
+        cost[i][j] = cost[i][i] + cost[j][j] + w[i][j];
+        raiz[i][j] = j;
+    }
+    for (int L=2; L<=n; L++)
+    {
+
+        for (int i=0; i<=n-L; i++)
+        {
+
+            int j,m,min;
+            j = i+L;
+            m = raiz[i][j-1];
+            min = cost[i][m-1] + cost[m][j];
+
+            for (int k=m+1; k <= raiz[i+1][j]; k++)
+            {
+                x = cost[i][k-1] + cost[k][j];
+                if(x < min){
+                  m = k;
+                  min = x;
+                  }
+            }
+            cost[i][j] = w[i][j] + min;
+            raiz[i][j] = m;
+          }
+        }
+
+  /*  printf("\nThe weight matrix W:\n");
+for(int i = 0; i <= n; i++) {
+  for(int j = i; j <= n; j++)
+        printf("%d  ", w[i][j]);
+        printf("\n");
+      }
+//Display Cost matrix C
+      printf("\nThe cost matrix C:\n");
+  for(int i = 0; i <= n; i++) {
+      for(int j = i; j <= n; j++)
+      printf("%d  ", cost[i][j]);
+            printf("\n");
+      }
+//Display root matrix R
+      printf("\nThe root matrix R:\n");
+      for (int i = 0; i <= n; i++) {
+        for(int j = i; j <= n; j++)
+            printf("%d  ", raiz[i][j]);
+            printf("\n");
+      }*/
+}
+
+
+obst *CONSTRUCT_obst(int i,int j){
+      obst *p;
+
+      if(i == j)
+        p = NULL;
+      else{
+          p = (obst *)malloc(sizeof(obst));
+          p->key = keys[raiz[i][j]];
+
+          p->esq = CONSTRUCT_obst(i, raiz[i][j] - 1);
+          p->dir = CONSTRUCT_obst(raiz[i][j], j);
+      }
+      return p;
+}
+
+void constroi_avore_otima(obst *no){
+
+  if (no == NULL)
+    return;
+     constroi_avore_otima(no->esq);
+     printf("chave: d%d fesq: nil fdir: nil\n", d);
+     printf("chave: %d ", no->key);
+ if(no->esq != NULL)
+		 printf("fesq: %d ", no->esq->key);
+	else
+	   printf("fesq: d%d ", d);
+     d++;
+ if(no->dir != NULL)
+		 printf("fdir: %d\n", no->dir->key);
+   else
+		 printf("fdir: d%d\n", d);
+  	 constroi_avore_otima(no->dir);
+}
+
+
+int main() {
+  int i, k,n;
+  obst *arvore;
+
+     scanf("%d", &n);
+		for(i = 1; i <= n; ++i) {
+             scanf("%d", &keys[i]);
+       }
+		for(i = 1; i <= n; ++i){
+			scanf("%d",&freq[i]);
+		}
+       for(i = 0; i <= n; i++) {
+             scanf("%d",&q[i]);
+       }
+
+	    optimalSearchTree(n);
+	    arvore = CONSTRUCT_obst(0,n);
+      constroi_avore_otima(arvore);
+      printf("chave: d%d fesq: nil fdir: nil\n", d);
+   return 0;
 }
