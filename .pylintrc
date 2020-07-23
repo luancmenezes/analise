@@ -250,3 +250,9 @@ valid-classmethod-first-arg=cls
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
 overgeneral-exceptions=Exception
+
+#Modelos BYOD  
+#Acessar url: http://frontbyodvdi.santanderbr.corp
+
+#
+#
