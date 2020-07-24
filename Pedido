@@ -1,0 +1,8 @@
+Analise de Riscos Acesso ao Gutenberg:
+
+Ambiente produção - cluster novo 6.1
+Diretório - /sistemas/bdi/MC
+ACL - bdr_partner_gut 
+usuário ACL - spgut01
+permissão - r-x
+Acesso recursivo - SIM
